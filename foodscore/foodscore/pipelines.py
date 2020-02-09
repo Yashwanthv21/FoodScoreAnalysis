@@ -9,3 +9,5 @@
 class FoodscorePipeline(object):
     def process_item(self, item, spider):
         return item
+    # extarct asin no
+    # asin_no = product_url.split('-')[0].split('/')[-1]

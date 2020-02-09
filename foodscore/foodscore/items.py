@@ -11,4 +11,4 @@ import scrapy
 class FoodscoreItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    productDetails = scrapy.Field()

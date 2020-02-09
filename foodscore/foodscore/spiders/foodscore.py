@@ -7,42 +7,40 @@ class FoodScoreSpider(scrapy.Spider):
     ]
 
     def parse(self, response):
+        total_products = int(response.css('span#span_pagination::text').get().strip().split()[-1].replace(',',''))
+        total_products = 5
+        page = 1
+        products = 0
+        products_per_page = 100
+
+        for page,products in enumerate(range(products_per_page, total_products, products_per_page),1):
+            url = 'https://www.ewg.org/foodscores/products?page=' + str(page) + '&per_page=' + str(products)
+            # print(url)
+            yield response.follow(url, callback=self.parse_products)
+
+        if total_products - products > 0:
+            url = 'https://www.ewg.org/foodscores/products?page=' + str(page+1) + '&per_page=' + str(total_products - products)
+            # print(url)
+            yield response.follow(url, callback=self.parse_products)
+
+    def parse_products(self, response):
         # get products
-        a = response.css('div#product_ind_result')
-        for e in a:
-            # Get product URL
-            print(e.css('a.nounderlineahref::attr(href)').get())
+        products = response.css('div#product_ind_result')
+        for product in products:
             # Get product Image
-            print(e.css('img.img_delete_bg_noshow::attr(src)').get())
+            # product_img = product.css('img.img_delete_bg_noshow::attr(src)').get()
             # Get product Categeory
-            print(e.css('div.product_category_below_link a::attr(href)').get())
-            print('_'*20)
+            # product_categeory = product.css('div.product_category_below_link a::attr(href)').get()
+            # if product_categeory:
+            #     product_categeory = product_categeory.split('=')
+            # if product_categeory and len(product_categeory) > 1:
+            #     product_categeory = product_categeory[1]
+            # # Get product URL
+            product_url = product.css('a.nounderlineahref::attr(href)').get()
+            if product_url is not None:
+                product_url = response.urljoin(product_url)
+            # print('_'*20)
 
-        for href in response.css('.author + a::attr(href)'):
-            yield response.follow(href, self.parse_author)
-
-        # follow pagination links
-        for href in response.css('li.next a::attr(href)'):
-            yield response.follow(href, self.parse)
-
-    def parse_product_details(self, response):
-
-        # Get Total Score
-        print(response.css('div.updated_score img::attr(src)').get())
-        # Get Title of Product
-        print(response.css('h1.truncate_title_specific_product_page::text').get())
-        # Get Nutrition Score
-        print(response.css('div#dial_for_nutrition img.gage_2_bg_img::attr(src)').get())
-        # Get Hazard/Ingredient Score
-        print(response.css('div#dial_for_hazard img.gage_2_bg_img::attr(src)').get())
-        # Get Processing Score
-        print(response.css('div#dial_for_processing img.gage_2_bg_img::attr(src)').get())
-
-        def extract_with_css(query):
-            return response.css(query).get(default='').strip()
-
-        yield {
-            'name': extract_with_css('h3.author-title::text'),
-            'birthdate': extract_with_css('.author-born-date::text'),
-            'bio': extract_with_css('.author-description::text'),
-        }
+            yield {
+                    'url': product_url,
+                }
