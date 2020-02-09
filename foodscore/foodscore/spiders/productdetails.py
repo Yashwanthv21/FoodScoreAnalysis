@@ -17,8 +17,8 @@ class FoodScoreSpider(scrapy.Spider):
                 product = json.loads(line)
                 product_url = product['url']
                 if product_url is not None:
-                    print(product_url)
-                    print('-'*25)
+                    # print(product_url)
+                    # print('-'*25)
                     yield Request(product_url, self.parse_product_details)
 
     def parse_product_details(self, response):
@@ -82,7 +82,9 @@ class FoodScoreSpider(scrapy.Spider):
         product_data['calories'] = ' '.join(list(map(lambda x: getattr(x, 'text').strip(), cal_box)))
 
         #get the serving size
-        product_data['serving_size'] = soup.find('option',selected=True).text
+        serving_size = soup.find('option',selected=True)
+        if serving_size:
+            product_data['serving_size'] = serving_size.text
 
         # nutrients value
         facts = nut.find('tbody').find('tbody')

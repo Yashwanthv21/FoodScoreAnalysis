@@ -8,13 +8,14 @@ class FoodScoreSpider(scrapy.Spider):
 
     def parse(self, response):
         total_products = int(response.css('span#span_pagination::text').get().strip().split()[-1].replace(',',''))
-        total_products = 5
+        # uncomment to test the code
+        # total_products = 5
         page = 1
         products = 0
         products_per_page = 100
 
         for page,products in enumerate(range(products_per_page, total_products, products_per_page),1):
-            url = 'https://www.ewg.org/foodscores/products?page=' + str(page) + '&per_page=' + str(products)
+            url = 'https://www.ewg.org/foodscores/products?page=' + str(page) + '&per_page=' + str(products_per_page)
             # print(url)
             yield response.follow(url, callback=self.parse_products)
 
