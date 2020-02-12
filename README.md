@@ -9,7 +9,7 @@ Scrape the Data from EWG Website, combine it with Amazon and Analyze it
  ```
  
  - The first spider crawls the URL's of all the products and dumps into a file.
- - The second spider reads each URL in the `product_urls.jl` file and crawls the site to get the product information. The result is dumped into `product_dfetails.jl` file.
+ - The second spider reads each URL in the `product_urls.jl` file and crawls the site to get the product information. The result is dumped into `product_details.jl` file.
  
  - Each product detail is scraped and saved as a json for exmaple
  ```
