@@ -5,7 +5,7 @@ from scrapy.http import Request
 
 
 class FoodScoreSpider(scrapy.Spider):
-    name = "foodscores12"
+    name = "foodScoreProductDetails"
     start_urls = [
         'https://www.ewg.org/foodscores/products?page=1&per_page=5',
     ]
